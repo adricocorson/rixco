@@ -1,7 +1,14 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { motion, useScroll, useTransform, useMotionValueEvent, useMotionValue, useSpring, useAnimationFrame, AnimatePresence } from 'framer-motion';
-import { ArrowUpRight, Smile, MousePointer2, Box, Hexagon, Mail, FileText, Menu, X } from 'lucide-react';
-import Hls from 'hls.js';
+import { ArrowUpRight, Smile, MousePointer2, Hexagon, Mail, FileText, Menu, X } from 'lucide-react';
+import avatar640 from './assets/profile-avatar-640.webp';
+import avatar960 from './assets/profile-avatar-960.webp';
+import strip1 from './assets/portfolio-strip-1.webp';
+import strip2 from './assets/portfolio-strip-2.webp';
+import strip3 from './assets/portfolio-strip-3.webp';
+import strip4 from './assets/portfolio-strip-4.webp';
+import strip5 from './assets/portfolio-strip-5.webp';
+import strip6 from './assets/portfolio-strip-6.webp';
 
 const Github = ({ size = 24, className = "" }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
@@ -13,12 +20,12 @@ const Linkedin = ({ size = 24, className = "" }) => (
 
 // --- MOCK DATA ---
 const PORTFOLIO_IMAGES = [
-  "https://s13.gifyu.com/images/b7bY7.jpg",
-  "https://s13.gifyu.com/images/b7btM.png",
-  "https://s13.gifyu.com/images/b7brC.jpg",
-  "https://s13.gifyu.com/images/b7bt0.png",
-  "https://s13.gifyu.com/images/b7brr.jpg",
-  "https://s13.gifyu.com/images/b7bro.jpg"
+  strip1,
+  strip2,
+  strip3,
+  strip4,
+  strip5,
+  strip6
 ];
 
 const SERVICES = [
@@ -44,32 +51,21 @@ const TECH_BADGES = [
   { name: "React", color: "61DAFB", iconId: "react" },
   { name: "JavaScript", color: "F7DF1E", iconId: "javascript" },
   { name: "HTML", color: "E34F26", iconId: "html5" },
-  {
-    name: "CSS", color: "1572B6", fallbackSvg: (
-      <svg viewBox="0 0 512 512" width="100%" height="100%" fill="currentColor">
-        <path d="M480 0H0l43.7 492.3L240 544l196.3-51.7L480 0zM240 491.5l-150.3-39.7L76.5 306h57.4l10.4 116.7L240 449.6l95.7-26.9 10.4-116.7h-148l-9.1-103h165.7l8.2-92H83.8l-8.5-96h311.6l-31 350.5L240 491.5z" />
-      </svg>
-    )
-  },
+  { name: "CSS", color: "1572B6", iconId: "css" },
   { name: "MySQL", color: "4479A1", iconId: "mysql" },
-  { name: "C#", color: "239120", customText: "#" },
+  { name: "C#", color: "512BD4", iconId: "dotnet" },
   { name: "C", color: "A8B9CC", iconId: "c" },
   {
     name: "XML", color: "00608C", fallbackSvg: (
-      <svg viewBox="0 0 24 24" width="100%" height="100%">
-        <rect x="0" y="4" width="24" height="16" rx="4" fill="currentColor" fillOpacity="0.15" />
-        <text x="12" y="16.5" fill="currentColor" fontSize="10px" fontWeight="900" fontFamily="system-ui" textAnchor="middle">XML</text>
+      <svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+        <path d="m8 8-4 4 4 4" />
+        <path d="m16 8 4 4-4 4" />
+        <path d="m14 5-4 14" />
       </svg>
     )
   },
   { name: "Python", color: "3776AB", iconId: "python" },
-  {
-    name: "Java", color: "ED8B00", fallbackSvg: (
-      <svg viewBox="0 0 24 24" width="100%" height="100%" fill="currentColor">
-        <path d="M14.336 17.653c1.558.114 2.871-.161 3.52-.734.42-.37.525-.795.302-1.218-.328-.62-1.528-.962-3.125-1.127-1.391-.144-2.836-.188-4.212-.132-2.128.085-4.103.351-5.698.814-1.32.522-2.012 1.258-1.936 2.031.066.671.611 1.233 1.558 1.636 1.48.629 3.82.977 6.444 1.05 1.077.03 2.12-.008 3.147-.32zm-3.666-4.57c3.856.248 6.942-.486 7.427-1.745.247-.643-.075-1.285-.885-1.74-1.047-.588-2.684-.876-4.498-.944-1.472-.055-3.051.046-4.636.26-1.583.212-3.036.568-4.137 1.002-1.125.443-1.667 1.025-1.475 1.583.19.55 1.022.99 2.298 1.242a14.28 14.28 0 0 0 5.906.342zm5.728-4.474c.642-.476.84-1.036.561-1.565-.306-.578-1.17-.958-2.38-1.144-1.277-.195-2.813-.207-4.46-.07-1.636.136-3.23.419-4.596.79-1.265.344-2.086.8-2.297 1.253-.186.4.013.823.541 1.157 1.096.69 3.011.969 5.092.937 2.115-.032 4.093-.34 5.539-.908v-.45zm-1.03-2.905c1.196-.407 1.68-.973 1.34-1.557-.33-.566-1.332-.907-2.73-1.024-1.411-.118-3.09-.044-4.836.183-1.688.22-3.284.582-4.55.992-1.2.389-1.921.874-2.008 1.33-.083.435.328.85 1.14 1.135 1.137.4 3.048.564 5.158.468a20.083 20.083 0 0 0 6.486-1.527zM11.66.024c-1.745.195-3.41.564-4.733.99-1.238.398-1.993.882-2.062 1.353-.066.452.38.868 1.221 1.141 1.252.407 3.328.536 5.558.375 2.162-.156 4.31-.624 5.922-1.205 1.272-.458 1.83-1.039 1.488-1.634-.34-.589-1.424-.925-2.93-1.01-1.487-.084-3.26-.01-5.114.195H11.66V.024zm4.49 19.803c-2.458.74-5.74 1.02-8.675.748a14.773 14.773 0 0 1-5.592-1.657C.283 18.067-.378 17.068.211 16c.307-.557 1.01-1.025 1.96-1.328a8.312 8.312 0 0 0 .152 1.706c.41 1.485 1.428 2.502 2.768 3.125a13.3 13.3 0 0 0 6.279 1.168c2.253-.08 4.295-.506 5.864-1.22 1.36-.619 2.102-1.385 2.053-2.158a8.384 8.384 0 0 0-1.066-3.279 4.394 4.394 0 0 1 3.513 1.942c.813 1.233.486 2.628-1.127 3.868-1.383.896-3.251 1.485-5.498 1.823 0 0-.256.096-3.14.07v.149l.061-.064zM9.544 24a25.433 25.433 0 0 1-2.997-.565c-1.332-.387-2.316-.925-2.738-1.493a3.504 3.504 0 0 1-.362-1.954 8.784 8.784 0 0 0 2.296 2.457c1.173.743 2.73 1.205 4.542 1.353.947.078 1.944.093 2.97.03 2.221-.131 4.24-.593 5.617-1.282 1.22-.61 1.868-1.341 1.83-2.073a8.81 8.81 0 0 0-.845-2.923 4.416 4.416 0 0 1 2.873 2.656c.451 1.393-.16 2.802-1.95 3.92-1.636 1.02-3.882 1.638-6.398 1.835a22.253 22.253 0 0 1-4.84.039z" />
-      </svg>
-    )
-  },
+  { name: "Java", color: "ED8B00", iconId: "openjdk" },
   { name: "Tailwind CSS", color: "06B6D4", iconId: "tailwindcss" },
   { name: "Canva", color: "00C4CC", customImg: "https://s13.gifyu.com/images/b7MI2.png" },
   { name: "Microsoft", color: "D83B01", customImg: "https://s13.gifyu.com/images/b7MIk.png" },
@@ -99,9 +95,8 @@ const BadgeItem = ({ badge }) => {
   const [srcIndex, setSrcIndex] = useState(0);
 
   const sources = [
-    badge.iconId && `https://cdn.simpleicons.org/${badge.iconId}/${badge.color}`,
-    badge.iconId && `https://unpkg.com/simple-icons@latest/icons/${badge.iconId}.svg`,
-    badge.iconId && `https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/${badge.iconId}.svg`
+    badge.customImg,
+    badge.iconId && `https://cdn.simpleicons.org/${badge.iconId}/${badge.color}`
   ].filter(Boolean);
 
   const handleError = () => {
@@ -113,22 +108,21 @@ const BadgeItem = ({ badge }) => {
   };
 
   return (
-    <div className="flex items-center gap-2.5 px-6 py-3 bg-[#161616] border border-white/10 rounded-full hover:bg-[#222222] transition-colors whitespace-nowrap">
-      <div className="flex items-center justify-center w-6 h-6 flex-shrink-0 bg-white/5 rounded-md">
-        {badge.customImg ? (
-          <img src={badge.customImg} alt={badge.name} className="w-4 h-4 object-contain" />
-        ) : srcIndex >= 0 && sources[srcIndex] ? (
-          <div
-            className="w-4 h-4"
-            style={{
-              backgroundColor: `#${badge.color}`,
-              WebkitMask: `url(${sources[srcIndex]}) center / contain no-repeat`,
-              mask: `url(${sources[srcIndex]}) center / contain no-repeat`
-            }}
+    <div className="flex items-center gap-2 px-4 py-2.5 sm:gap-2.5 sm:px-5 md:px-6 md:py-3 bg-[#161616] border border-white/10 rounded-full hover:bg-[#222222] transition-colors whitespace-nowrap">
+      <div className="flex items-center justify-center w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 bg-white/5 rounded-md">
+        {srcIndex >= 0 && sources[srcIndex] ? (
+          <img
+            src={sources[srcIndex]}
+            alt=""
+            aria-hidden="true"
+            draggable="false"
+            loading="lazy"
+            decoding="async"
             onError={handleError}
+            className="w-3.5 h-3.5 sm:w-4 sm:h-4 object-contain"
           />
         ) : badge.fallbackSvg ? (
-          <div style={{ color: `#${badge.color}` }} className="w-4 h-4 flex items-center justify-center">
+          <div style={{ color: `#${badge.color}` }} className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex items-center justify-center">
             {badge.fallbackSvg}
           </div>
         ) : (
@@ -137,7 +131,7 @@ const BadgeItem = ({ badge }) => {
           </div>
         )}
       </div>
-      <span className="text-white text-sm font-medium">
+      <span className="text-white text-xs sm:text-sm font-medium">
         {badge.name}
       </span>
     </div>
@@ -151,21 +145,28 @@ const HLSVideo = ({ src, desaturated = false, className = "" }) => {
     const video = videoRef.current;
     if (!video) return;
 
-    if (Hls.isSupported()) {
-      const hls = new Hls({ enableWorker: true });
-      hls.loadSource(src);
-      hls.attachMedia(video);
-      hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        video.play().catch(() => { });
-      });
+    let hls;
+    let isDisposed = false;
+    const playVideo = () => video.play().catch(() => { });
 
-      return () => hls.destroy();
-    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+    if (video.canPlayType('application/vnd.apple.mpegurl')) {
       video.src = src;
-      video.addEventListener('loadedmetadata', () => {
-        video.play().catch(() => { });
+      video.addEventListener('loadedmetadata', playVideo);
+    } else {
+      import('hls.js').then(({ default: Hls }) => {
+        if (isDisposed || !Hls.isSupported()) return;
+        hls = new Hls({ enableWorker: true });
+        hls.loadSource(src);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED, playVideo);
       });
     }
+
+    return () => {
+      isDisposed = true;
+      video.removeEventListener('loadedmetadata', playVideo);
+      if (hls) hls.destroy();
+    };
   }, [src]);
 
   return (
@@ -178,6 +179,50 @@ const HLSVideo = ({ src, desaturated = false, className = "" }) => {
       className={`absolute inset-0 w-full h-full object-cover ${className}`}
       style={{ filter: desaturated ? 'saturate(0)' : 'none' }}
     />
+  );
+};
+
+const ProjectMedia = ({ src, projectName, index }) => {
+  const [hasError, setHasError] = useState(false);
+
+  return (
+    <div className="aspect-video md:aspect-[4/3] rounded-xl md:rounded-2xl overflow-hidden bg-zinc-900 relative group border border-white/5">
+      <div className="absolute inset-0 z-0 flex flex-col items-center justify-center gap-3 bg-[#090909] text-center px-4">
+        {hasError ? (
+          <>
+            <div className="h-9 w-9 rounded-full border border-white/10 bg-white/5 flex items-center justify-center text-zinc-500">!</div>
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wide text-zinc-300">Preview unavailable</p>
+              <p className="text-[11px] uppercase tracking-wide text-zinc-600 mt-1">{projectName}</p>
+            </div>
+          </>
+        ) : (
+          <>
+          <div className="h-9 w-9 rounded-full border border-white/10 bg-white/5 flex items-center justify-center text-zinc-500">
+            {String(index + 1).padStart(2, "0")}
+          </div>
+          <div>
+            <p className="text-xs font-bold uppercase tracking-wide text-zinc-300">
+              Loading preview
+            </p>
+            <p className="text-[11px] uppercase tracking-wide text-zinc-600 mt-1">
+              {projectName}
+            </p>
+          </div>
+          </>
+        )}
+      </div>
+      {!hasError && (
+        <img
+          src={src}
+          alt={`${projectName} work preview ${index + 1}`}
+          loading="lazy"
+          decoding="async"
+          onError={() => setHasError(true)}
+          className="relative z-10 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+        />
+      )}
+    </div>
   );
 };
 
@@ -202,6 +247,24 @@ const LocalTime = () => {
   }, []);
 
   return <span>{time}</span>;
+};
+
+const useIsDesktop = () => {
+  const [isDesktop, setIsDesktop] = useState(() => {
+    if (typeof window === 'undefined') return true;
+    return window.matchMedia('(min-width: 1024px)').matches;
+  });
+
+  useEffect(() => {
+    const media = window.matchMedia('(min-width: 1024px)');
+    const handleChange = () => setIsDesktop(media.matches);
+
+    handleChange();
+    media.addEventListener('change', handleChange);
+    return () => media.removeEventListener('change', handleChange);
+  }, []);
+
+  return isDesktop;
 };
 
 // --- NEW ROLLING LINK COMPONENT ---
@@ -267,9 +330,9 @@ const Navbar = ({ isVisible }) => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = '';
     }
-    return () => { document.body.style.overflow = 'unset'; };
+    return () => { document.body.style.overflow = ''; };
   }, [isOpen]);
 
   return (
@@ -278,10 +341,10 @@ const Navbar = ({ isVisible }) => {
         initial={{ y: -100 }}
         animate={{ y: isVisible ? 0 : -100 }}
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className="fixed top-0 w-full z-50 flex justify-between items-center px-6 md:px-8 py-4 md:py-6 text-white mix-blend-difference"
+        className="fixed top-0 w-full z-50 flex justify-between items-center px-4 sm:px-6 lg:px-8 py-4 lg:py-6 text-white mix-blend-difference"
       >
         {/* Desktop Links */}
-        <div className="hidden md:flex w-full justify-between items-center">
+        <div className="hidden lg:flex w-full justify-between items-center">
           <RollingLink href="#home" className="font-bold tracking-widest text-sm uppercase">Home</RollingLink>
           <RollingLink href="#about" className="font-bold tracking-widest text-sm uppercase">About</RollingLink>
           <RollingLink href="#services" className="font-bold tracking-widest text-sm uppercase">Services</RollingLink>
@@ -290,9 +353,9 @@ const Navbar = ({ isVisible }) => {
         </div>
 
         {/* Mobile Hamburger Toggle */}
-        <div className="flex md:hidden w-full justify-between items-center">
-          <span className="font-black text-xl tracking-tighter mix-blend-difference">ADRICO</span>
-          <button onClick={() => setIsOpen(true)} className="p-2 -mr-2">
+        <div className="flex lg:hidden w-full justify-between items-center">
+          <span className="font-black text-xl tracking-normal mix-blend-difference">ADRICO</span>
+          <button aria-label="Open navigation menu" onClick={() => setIsOpen(true)} className="min-h-11 min-w-11 p-2 -mr-2 flex items-center justify-center">
             <Menu size={28} />
           </button>
         </div>
@@ -306,17 +369,17 @@ const Navbar = ({ isVisible }) => {
             animate={{ opacity: 1, y: "0%" }}
             exit={{ opacity: 0, y: "-100%" }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed inset-0 z-[100] bg-black text-white flex flex-col justify-center items-center overflow-hidden"
+            className="fixed inset-0 z-[100] bg-black text-white flex flex-col justify-center items-center overflow-hidden px-6 py-10"
           >
-            <button onClick={() => setIsOpen(false)} className="absolute top-6 right-6 p-2 text-zinc-400 hover:text-white transition-colors">
+            <button aria-label="Close navigation menu" onClick={() => setIsOpen(false)} className="absolute top-5 right-5 sm:top-6 sm:right-6 min-h-11 min-w-11 p-2 text-zinc-400 hover:text-white transition-colors flex items-center justify-center">
               <X size={36} strokeWidth={1.5} />
             </button>
-            <div className="flex flex-col gap-10 text-center">
-              <RollingLink onClick={() => setIsOpen(false)} href="#home" className="font-black text-[10vw] uppercase tracking-tighter">Home</RollingLink>
-              <RollingLink onClick={() => setIsOpen(false)} href="#about" className="font-black text-[10vw] uppercase tracking-tighter">About</RollingLink>
-              <RollingLink onClick={() => setIsOpen(false)} href="#services" className="font-black text-[10vw] uppercase tracking-tighter">Services</RollingLink>
-              <RollingLink onClick={() => setIsOpen(false)} href="#projects" className="font-black text-[10vw] uppercase tracking-tighter">Projects</RollingLink>
-              <RollingLink onClick={() => setIsOpen(false)} href="#contacts" className="font-black text-[10vw] uppercase tracking-tighter">Contacts</RollingLink>
+            <div className="flex flex-col gap-6 sm:gap-8 text-center">
+              <RollingLink onClick={() => setIsOpen(false)} href="#home" className="font-black text-5xl sm:text-6xl uppercase tracking-normal">Home</RollingLink>
+              <RollingLink onClick={() => setIsOpen(false)} href="#about" className="font-black text-5xl sm:text-6xl uppercase tracking-normal">About</RollingLink>
+              <RollingLink onClick={() => setIsOpen(false)} href="#services" className="font-black text-5xl sm:text-6xl uppercase tracking-normal">Services</RollingLink>
+              <RollingLink onClick={() => setIsOpen(false)} href="#projects" className="font-black text-5xl sm:text-6xl uppercase tracking-normal">Projects</RollingLink>
+              <RollingLink onClick={() => setIsOpen(false)} href="#contacts" className="font-black text-5xl sm:text-6xl uppercase tracking-normal">Contacts</RollingLink>
             </div>
 
             <div className="absolute bottom-10 flex gap-6 text-zinc-400">
@@ -331,15 +394,6 @@ const Navbar = ({ isVisible }) => {
   );
 };
 
-const Button = ({ children, className = "" }) => (
-  <button className={`group relative px-6 py-3 rounded-full bg-black border border-[#a855f7] text-white font-semibold text-sm overflow-hidden transition-all hover:scale-105 ${className}`}>
-    <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-purple-600 to-pink-600 opacity-20 group-hover:opacity-40 transition-opacity"></div>
-    <span className="relative flex items-center gap-2">
-      {children}
-    </span>
-  </button>
-);
-
 const Word = ({ children, progress, range }) => {
   const opacity = useTransform(progress, range, [0.15, 1]);
   return (
@@ -351,6 +405,10 @@ const Word = ({ children, progress, range }) => {
 
 const ScrollRevealText = ({ text, className, progress }) => {
   const words = text.split(" ");
+  if (!progress) {
+    return <p className={className}>{text}</p>;
+  }
+
   return (
     <p className={className}>
       {words.map((word, i) => {
@@ -364,6 +422,40 @@ const ScrollRevealText = ({ text, className, progress }) => {
         );
       })}
     </p>
+  );
+};
+
+const ContactLetter = ({ char, index, progress }) => {
+  const start = 0.02 + (index * 0.015);
+  const end = start + 0.1;
+
+  const charY = useTransform(progress, [start, end], ["120%", "0%"], { clamp: true });
+  const charRotate = useTransform(progress, [start, end], [15, 0], { clamp: true });
+  const charOpacity = useTransform(progress, [start, end], [0, 1], { clamp: true });
+
+  return (
+    <motion.span
+      style={{ y: charY, rotate: charRotate, opacity: charOpacity, display: 'inline-block' }}
+      className="text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-black uppercase tracking-normal leading-none origin-bottom-left"
+    >
+      {char === " " ? "\u00A0" : char}
+    </motion.span>
+  );
+};
+
+const FooterChar = ({ char, index, progress }) => {
+  const start = index * 0.1;
+  const end = start + 0.5;
+  const y = useTransform(progress, [start, end], ["120%", "0%"], { clamp: true });
+  const opacity = useTransform(progress, [start, end], [0, 1], { clamp: true });
+
+  return (
+    <motion.span
+      style={{ y, opacity, display: 'inline-block' }}
+      className="char"
+    >
+      {char}
+    </motion.span>
   );
 };
 
@@ -484,22 +576,24 @@ const ClickSpark = ({
   const canvasRef = useRef(null);
   const sparksRef = useRef([]);
   const startTimeRef = useRef(null);
+  const animationIdRef = useRef(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const parent = canvas.parentElement;
-    if (!parent) return;
-
     let resizeTimeout;
 
     const resizeCanvas = () => {
-      const { width, height } = parent.getBoundingClientRect();
-      if (canvas.width !== width || canvas.height !== height) {
-        canvas.width = width;
-        canvas.height = height;
-      }
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      canvas.width = Math.round(width * dpr);
+      canvas.height = Math.round(height * dpr);
+      const ctx = canvas.getContext('2d');
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
     const handleResize = () => {
@@ -507,13 +601,13 @@ const ClickSpark = ({
       resizeTimeout = setTimeout(resizeCanvas, 100);
     };
 
-    const ro = new ResizeObserver(handleResize);
-    ro.observe(parent);
-
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', handleResize);
     resizeCanvas();
 
     return () => {
-      ro.disconnect();
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('orientationchange', handleResize);
       clearTimeout(resizeTimeout);
     };
   }, []);
@@ -534,55 +628,63 @@ const ClickSpark = ({
     [easing]
   );
 
-  useEffect(() => {
+  const drawSparks = useCallback(function drawSparksFrame(timestamp) {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
 
-    let animationId;
+    if (!startTimeRef.current) {
+      startTimeRef.current = timestamp;
+    }
 
-    const draw = timestamp => {
-      if (!startTimeRef.current) {
-        startTimeRef.current = timestamp;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    sparksRef.current = sparksRef.current.filter(spark => {
+      const elapsed = timestamp - spark.startTime;
+      if (elapsed >= duration) {
+        return false;
       }
+
+      const progress = elapsed / duration;
+      const eased = easeFunc(progress);
+
+      const distance = eased * sparkRadius * extraScale;
+      const lineLength = sparkSize * (1 - eased);
+
+      const x1 = spark.x + distance * Math.cos(spark.angle);
+      const y1 = spark.y + distance * Math.sin(spark.angle);
+      const x2 = spark.x + (distance + lineLength) * Math.cos(spark.angle);
+      const y2 = spark.y + (distance + lineLength) * Math.sin(spark.angle);
+
+      ctx.strokeStyle = sparkColor;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+
+      return true;
+    });
+
+    if (sparksRef.current.length > 0) {
+      animationIdRef.current = requestAnimationFrame(drawSparksFrame);
+    } else {
+      animationIdRef.current = null;
+      startTimeRef.current = null;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  }, [duration, easeFunc, extraScale, sparkColor, sparkRadius, sparkSize]);
 
-      sparksRef.current = sparksRef.current.filter(spark => {
-        const elapsed = timestamp - spark.startTime;
-        if (elapsed >= duration) {
-          return false;
-        }
-
-        const progress = elapsed / duration;
-        const eased = easeFunc(progress);
-
-        const distance = eased * sparkRadius * extraScale;
-        const lineLength = sparkSize * (1 - eased);
-
-        const x1 = spark.x + distance * Math.cos(spark.angle);
-        const y1 = spark.y + distance * Math.sin(spark.angle);
-        const x2 = spark.x + (distance + lineLength) * Math.cos(spark.angle);
-        const y2 = spark.y + (distance + lineLength) * Math.sin(spark.angle);
-
-        ctx.strokeStyle = sparkColor;
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(x1, y1);
-        ctx.lineTo(x2, y2);
-        ctx.stroke();
-
-        return true;
-      });
-
-      animationId = requestAnimationFrame(draw);
-    };
-
-    animationId = requestAnimationFrame(draw);
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
 
     return () => {
-      cancelAnimationFrame(animationId);
+      if (animationIdRef.current) {
+        cancelAnimationFrame(animationIdRef.current);
+      }
     };
-  }, [sparkColor, sparkSize, sparkRadius, sparkCount, duration, easeFunc, extraScale]);
+  }, []);
 
   const handleClick = e => {
     const canvas = canvasRef.current;
@@ -600,6 +702,9 @@ const ClickSpark = ({
     }));
 
     sparksRef.current.push(...newSparks);
+    if (!animationIdRef.current) {
+      animationIdRef.current = requestAnimationFrame(drawSparks);
+    }
   };
 
   return (
@@ -614,11 +719,11 @@ const ClickSpark = ({
       <canvas
         ref={canvasRef}
         style={{
-          width: '100%',
-          height: '100%',
+          width: '100vw',
+          height: '100dvh',
           display: 'block',
           userSelect: 'none',
-          position: 'absolute',
+          position: 'fixed',
           top: 0,
           left: 0,
           pointerEvents: 'none',
@@ -656,25 +761,6 @@ const CustomCursor = () => {
 };
 
 // --- ANIMATION VARIANTS ---
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.15
-    }
-  }
-};
-
-const fadeUpItem = {
-  hidden: { opacity: 0, y: 50 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { type: "spring", stiffness: 60, damping: 15 }
-  }
-};
-
 const slideInLeft = {
   hidden: { opacity: 0, x: -50 },
   show: { opacity: 1, x: 0, transition: { duration: 0.8, ease: "easeOut" } }
@@ -694,9 +780,16 @@ export default function App() {
   const contactRef = useRef(null);
 
   // --- PRELOADER STATE ---
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(() => {
+    if (typeof window === "undefined") return false;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return false;
+    if (!window.matchMedia("(min-width: 1024px)").matches) return false;
+    return sessionStorage.getItem("adricoIntroPlayed") !== "true";
+  });
   const [isZooming, setIsZooming] = useState(false);
   const [isNavVisible, setIsNavVisible] = useState(true); // Start as visible
+  const isDesktop = useIsDesktop();
+  const [shouldLoadHeroVideo, setShouldLoadHeroVideo] = useState(false);
 
   // --- DYNAMIC NAVBAR LOGIC ---
   const { scrollY } = useScroll();
@@ -712,106 +805,72 @@ export default function App() {
     }
   });
 
+  useEffect(() => {
+    if (!isDesktop) {
+      return undefined;
+    }
+
+    const enableVideo = () => setShouldLoadHeroVideo(true);
+
+    window.addEventListener('pointermove', enableVideo, { once: true, passive: true });
+    window.addEventListener('scroll', enableVideo, { once: true, passive: true });
+    window.addEventListener('keydown', enableVideo, { once: true });
+
+    return () => {
+      window.removeEventListener('pointermove', enableVideo);
+      window.removeEventListener('scroll', enableVideo);
+      window.removeEventListener('keydown', enableVideo);
+    };
+  }, [isDesktop]);
+
   // --- ADRICO PRELOADER LOGIC ---
   useEffect(() => {
-    // Check if the user has already loaded the site this session to play only once
-    // [FIX] Commented out during development so the animation shows every time you refresh!
-    // if (sessionStorage.getItem('hasLoaded')) {
-    //   setIsLoading(false);
-    //   return;
-    // }
+    if (!isLoading) return undefined;
 
-    // Preload images and track loading status to ensure content is fully ready
-    const imageUrls = [
-      ...PORTFOLIO_IMAGES,
-      ...PROJECTS.flatMap(p => p.images),
-      "https://i.ibb.co.com/nNBVbnMm/Profile.png"
-    ];
-    const uniqueUrls = [...new Set(imageUrls)];
-    let loadedCount = 0;
-    
-    uniqueUrls.forEach(url => {
-      const img = new Image();
-      img.src = url;
-      img.onload = () => loadedCount++;
-      img.onerror = () => loadedCount++;
-    });
-
-    const duration = 6000; // 6s duration for the wave fill
-    function easeOutQuart(x) {
-      return 1 - Math.pow(1 - x, 4);
+    const duration = 2600;
+    function easeInOutCubic(x) {
+      return x < 0.5
+        ? 4 * x * x * x
+        : 1 - Math.pow(-2 * x + 2, 3) / 2;
     }
 
     let rafId;
-    
-    const startTimer = setTimeout(() => {
-      const percentEl = document.getElementById('percent');
-      const startTime = performance.now();
+    const percentEl = document.getElementById('percent');
+    const startTime = performance.now();
 
-      function updateCounter(currentTime) {
-        const elapsed = currentTime - startTime;
-        let progress = elapsed / duration;
-        
-        if (progress > 1) {
-          progress = 1;
-        }
+    function updateCounter(currentTime) {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const easedProgress = easeInOutCubic(progress);
 
-        const easedProgress = easeOutQuart(progress);
-        
-        if (percentEl) {
-          // Counter now smoothly goes all the way to 100
-          percentEl.innerText = Math.floor(easedProgress * 100);
-        }
-
-        if (progress < 1) {
-          rafId = requestAnimationFrame(updateCounter);
-        } else if (percentEl) {
-          percentEl.innerText = "100";
-        }
+      if (percentEl) {
+        percentEl.innerText = Math.floor(easedProgress * 100);
       }
 
-      rafId = requestAnimationFrame(updateCounter);
-    }, 500);
+      if (progress < 1) {
+        rafId = requestAnimationFrame(updateCounter);
+      } else if (percentEl) {
+        percentEl.innerText = "100";
+      }
+    }
 
-    // Wait exactly 6.5s (500ms delay + 6000ms duration) for wave to finish
-    const minAnimationTime = new Promise(resolve => setTimeout(resolve, 6500));
-    
-    // Wait for actual images to finish loading
-    const allImagesLoaded = new Promise(resolve => {
-      const checkInterval = setInterval(() => {
-        if (loadedCount >= uniqueUrls.length) {
-          clearInterval(checkInterval);
-          resolve();
-        }
-      }, 100);
-      
-      // Failsafe increased to 7.5s
-      setTimeout(() => {
-        clearInterval(checkInterval);
-        resolve();
-      }, 7500);
-    });
+    rafId = requestAnimationFrame(updateCounter);
 
-    let zoomTimeout;
-    
-    // Once BOTH the animation reaches 100% AND images are loaded (or failsafe hits)...
-    Promise.all([minAnimationTime, allImagesLoaded]).then(() => {
-      // 1. Trigger the text zoom out instantly
+    const zoomTimeout = setTimeout(() => {
       setIsZooming(true);
-      
-      // 2. Overlap the fade out! Zoom takes 0.6s, fade out at 0.4s for an instant reveal
-      zoomTimeout = setTimeout(() => {
-        setIsLoading(false);
-        // sessionStorage.setItem('hasLoaded', 'true');
-      }, 400); 
-    });
+    }, duration);
+
+    const finishTimeout = setTimeout(() => {
+      setIsLoading(false);
+      sessionStorage.setItem("adricoIntroPlayed", "true");
+    }, duration + 420);
 
     return () => {
-      clearTimeout(startTimer);
       clearTimeout(zoomTimeout);
+      clearTimeout(finishTimeout);
       cancelAnimationFrame(rafId);
     };
-  }, []);
+  }, [isLoading]);
 
   // --- PORTFOLIO SCROLLER SETUP ---
   const { scrollYProgress: gridScrollProgress } = useScroll({
@@ -830,7 +889,10 @@ export default function App() {
   // --- LENIS SMOOTH SCROLL INTEGRATION ---
   useEffect(() => {
     // Only initialize smooth scrolling AFTER the loading screen disappears
-    if (isLoading) return;
+    if (isLoading || !isDesktop) {
+      window.lenis = undefined;
+      return;
+    }
 
     const script = document.createElement('script');
     script.src = "https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js";
@@ -846,7 +908,7 @@ export default function App() {
         smoothWheel: true,
         wheelMultiplier: 0.85,
         touchMultiplier: 2,
-        syncTouch: true, // CRITICAL RESPONSIVENESS FIX: 1-to-1 native feel on mobile
+        syncTouch: false,
       });
 
       window.lenis = lenis;
@@ -867,7 +929,7 @@ export default function App() {
       if (script.parentNode) script.parentNode.removeChild(script);
       window.lenis = undefined;
     };
-  }, [isLoading]);
+  }, [isLoading, isDesktop]);
 
   // --- MARQUEE PLAYBACK RATE CONTROL ---
   useEffect(() => {
@@ -908,7 +970,7 @@ export default function App() {
     offset: ["start start", "end end"]
   });
 
-  const mappedAboutProgress = useTransform(rawAboutProgress, [0.1, 0.9], [0, 1]);
+  const mappedAboutProgress = useTransform(rawAboutProgress, [0, 0.75], [0, 1]);
 
   const smoothAboutProgress = useSpring(mappedAboutProgress, {
     damping: 40,
@@ -951,12 +1013,12 @@ export default function App() {
   const contactShapeRotate2 = useTransform(contactScrollProgress, [0, 1], [45, -90]);
 
   // Foreground Content scrubs in sequentially *WHILE* the screen is pinned (0.30 to 0.70)
-  const descOpacity = useTransform(smoothContactProgress, [0.50, 0.60], [0, 1], { clamp: true });
-  const descY = useTransform(smoothContactProgress, [0.50, 0.60], [30, 0], { clamp: true });
+  const descOpacity = useTransform(smoothContactProgress, [0.10, 0.22], [0, 1], { clamp: true });
+  const descY = useTransform(smoothContactProgress, [0.10, 0.22], [30, 0], { clamp: true });
 
-  const btnOpacity = useTransform(smoothContactProgress, [0.58, 0.68], [0, 1], { clamp: true });
-  const btnY = useTransform(smoothContactProgress, [0.58, 0.68], [20, 0], { clamp: true });
-  const btnScale = useTransform(smoothContactProgress, [0.58, 0.68], [0.8, 1], { clamp: true });
+  const btnOpacity = useTransform(smoothContactProgress, [0.16, 0.28], [0, 1], { clamp: true });
+  const btnY = useTransform(smoothContactProgress, [0.16, 0.28], [20, 0], { clamp: true });
+  const btnScale = useTransform(smoothContactProgress, [0.16, 0.28], [0.8, 1], { clamp: true });
 
   const handleHeroMouseMove = (e) => {
     const { innerWidth, innerHeight } = window;
@@ -980,9 +1042,8 @@ export default function App() {
           <motion.div
             key="adrico-preloader"
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.8, ease: "easeInOut" }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
             className="fixed inset-0 z-[999999] bg-[#0a0a0a] flex justify-center items-center overflow-hidden"
-            style={{ fontFamily: "'Inter', sans-serif" }}
           >
             <div className={`preloader-wrapper ${isZooming ? 'zoom-out' : ''}`}>
               <div className="text-container">
@@ -1001,8 +1062,6 @@ export default function App() {
         <CustomCursor />
         <style dangerouslySetInnerHTML={{
           __html: `
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@600;900&display=swap');
-
         /* --- PRELOADER CSS --- */
         .preloader-wrapper {
             position: relative;
@@ -1027,7 +1086,7 @@ export default function App() {
             font-weight: 900;
             color: #2a2a2a;
             margin: 0;
-            letter-spacing: -0.05em;
+            letter-spacing: 0;
             line-height: 1.1;
             user-select: none;
         }
@@ -1040,7 +1099,7 @@ export default function App() {
             font-size: clamp(2rem, 12vw, 10rem);
             font-weight: 900;
             margin: 0;
-            letter-spacing: -0.05em;
+            letter-spacing: 0;
             line-height: 1.1;
             color: transparent;
             user-select: none;
@@ -1052,7 +1111,7 @@ export default function App() {
             background-clip: text;
             background-position: 0em -0.9em;
             /* [FIX] Combined into a single animation to avoid CSS minification bugs */
-            animation: waveFill 6s cubic-bezier(0.25, 1, 0.5, 1) 0.5s forwards;
+            animation: waveFill 2.6s cubic-bezier(0.65, 0, 0.35, 1) forwards;
         }
 
         .loading-info {
@@ -1065,7 +1124,7 @@ export default function App() {
             display: flex;
             gap: 4px;
             opacity: 0;
-            animation: preloaderFadeIn 0.5s ease-in forwards 0.5s;
+            animation: preloaderFadeIn 0.2s ease-in forwards 0.1s;
         }
 
         /* --- PRELOADER KEYFRAMES --- */
@@ -1078,16 +1137,34 @@ export default function App() {
         }
         @keyframes zoomThrough {
             0% { transform: scale(1); opacity: 1; }
-            100% { transform: scale(40); opacity: 0; }
+            100% { transform: scale(24); opacity: 0; }
         }
 
         /* --- NEOLEAF FOOTER CSS --- */
         .giant-text {
-            font-size: 28vw; 
+            font-size: 5.5rem;
             line-height: 1.1;
-            letter-spacing: -0.05em;
+            letter-spacing: 0;
             display: flex;
             justify-content: center;
+        }
+
+        @media (min-width: 640px) {
+          .giant-text {
+            font-size: 9rem;
+          }
+        }
+
+        @media (min-width: 1024px) {
+          .giant-text {
+            font-size: 16rem;
+          }
+        }
+
+        @media (min-width: 1440px) {
+          .giant-text {
+            font-size: 22rem;
+          }
         }
 
         .char {
@@ -1126,8 +1203,9 @@ export default function App() {
         .btn-animated {
           position: relative;
           overflow: hidden;
-          padding: 1.25rem 3rem;
-          font-size: 1.125rem;
+          min-height: 44px;
+          padding: 0.9rem 1.5rem;
+          font-size: 1rem;
           font-weight: 700;
           color: #000000;
           background-color: #ffffff;
@@ -1138,6 +1216,20 @@ export default function App() {
           transition: border-color 0.6s ease, transform 0.3s ease;
           display: inline-flex;
           text-decoration: none;
+        }
+
+        @media (min-width: 640px) {
+          .btn-animated {
+            padding: 1rem 2.25rem;
+            font-size: 1.0625rem;
+          }
+        }
+
+        @media (min-width: 1024px) {
+          .btn-animated {
+            padding: 1.25rem 3rem;
+            font-size: 1.125rem;
+          }
         }
 
         .btn-animated:hover {
@@ -1200,18 +1292,30 @@ export default function App() {
           display: flex;
           width: 100%;
           overflow: hidden;
-          mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
-          -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+          mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+          -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
         }
 
         .marquee-track {
           display: flex;
           flex-shrink: 0;
           align-items: center;
-          gap: 1.5rem;
-          padding-right: 1.5rem;
+          gap: 0.75rem;
+          padding-right: 0.75rem;
           /* Increased from 25s to 50s for a much slower, more luxurious glide */
           animation: scroll 50s linear infinite; 
+        }
+
+        @media (min-width: 768px) {
+          .marquee-container {
+            mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+            -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+          }
+
+          .marquee-track {
+            gap: 1.5rem;
+            padding-right: 1.5rem;
+          }
         }
 
         @keyframes scroll {
@@ -1228,10 +1332,12 @@ export default function App() {
           ref={heroRef}
           onMouseMove={handleHeroMouseMove}
           onMouseLeave={handleHeroMouseLeave}
-          className="relative min-h-[130vh] flex flex-col items-center justify-start overflow-hidden pt-32"
+          className="relative min-h-[100svh] sm:min-h-[110svh] lg:min-h-[125vh] flex flex-col items-center justify-start overflow-hidden pt-24 sm:pt-28 lg:pt-32"
         >
-          {/* Background HLS Video */}
-          <HLSVideo src="https://stream.mux.com/9JXDljEVWYwWu01PUkAemafDugK89o01BR6zqJ3aS9u00A.m3u8" className="z-0 opacity-50" />
+          <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_50%_34%,rgba(255,255,255,0.12),transparent_34%),linear-gradient(180deg,#050505_0%,#000_70%)]" />
+          {shouldLoadHeroVideo && isDesktop && !isLoading && (
+            <HLSVideo src="https://stream.mux.com/9JXDljEVWYwWu01PUkAemafDugK89o01BR6zqJ3aS9u00A.m3u8" className="z-0 opacity-50" />
+          )}
 
           {/* Gradient Fades for blending into the next section */}
           <div className="absolute top-0 w-full h-[200px] bg-gradient-to-b from-black to-transparent z-0 pointer-events-none" />
@@ -1240,7 +1346,7 @@ export default function App() {
           {/* Massive Background Text (Parallaxed) */}
           <motion.div
             style={{ y: heroTextY, opacity: heroOpacity }}
-            className="absolute top-[12vh] w-full text-center z-10 pointer-events-none px-4"
+            className="absolute top-[14svh] sm:top-[12vh] w-full text-center z-10 pointer-events-none px-4"
           >
             <h1 className="opacity-90">
               {/* UX FIX: Forced to stay on one row (whitespace-nowrap) and mathematically scaled down slightly so it fits screen edges perfectly */}
@@ -1249,39 +1355,45 @@ export default function App() {
                 speed={3}
                 color="#b5b5b5"
                 shineColor="#ffffff"
-                className="text-[11vw] sm:text-[13vw] md:text-[15vw] lg:text-[17vw] font-black leading-none tracking-tighter whitespace-nowrap"
+                className="text-5xl min-[390px]:text-6xl sm:text-7xl md:text-8xl lg:text-9xl xl:text-[10rem] 2xl:text-[12rem] font-black leading-none tracking-normal whitespace-nowrap"
               />
             </h1>
           </motion.div>
 
           {/* 3D Avatar (Wrapped with entry animation + mouse tracking) */}
           <motion.div
-            initial={{ scale: 0.8, opacity: 0, y: 50 }}
+            initial={isDesktop ? { scale: 0.8, opacity: 0, y: 50 } : false}
             animate={{ scale: 1, opacity: 1, y: 0 }}
-            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-            className="relative z-20 w-[65vw] h-[65vw] max-w-[300px] max-h-[300px] md:w-[450px] md:h-[450px] md:max-w-none md:max-h-none mt-[15vh] md:mt-[20vh] pointer-events-none"
+            transition={isDesktop ? { duration: 1.2, ease: [0.16, 1, 0.3, 1] } : { duration: 0 }}
+            className="relative z-20 w-[min(72vw,20rem)] h-[min(72vw,20rem)] md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] mt-[18svh] sm:mt-[18vh] lg:mt-[20vh] pointer-events-none"
           >
             <motion.div style={{ x: avatarX, y: avatarY }} className="w-full h-full">
               <img
-                src="https://i.ibb.co.com/nNBVbnMm/Profile.png"
-                alt="3D Avatar"
-                fetchpriority="high"
+                src={avatar640}
+                srcSet={`${avatar640} 640w, ${avatar960} 960w`}
+                sizes="(min-width: 768px) 28rem, min(72vw, 20rem)"
+                alt="Rico 3D avatar"
+                width="640"
+                height="800"
+                loading="eager"
+                decoding="async"
+                fetchPriority="high"
                 className="w-full h-full object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
               />
             </motion.div>
           </motion.div>
 
           {/* --- BOTTOM HERO ELEMENTS & TECH MARQUEE --- */}
-          <div className="absolute bottom-8 w-full flex flex-col gap-8 md:gap-10 z-30">
+          <div className="absolute bottom-5 sm:bottom-8 w-full flex flex-col gap-6 sm:gap-8 md:gap-10 z-30">
 
-            <div className="px-6 md:px-16 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 md:gap-0">
+            <div className="px-4 sm:px-6 lg:px-16 flex flex-col md:flex-row justify-between items-center md:items-end gap-5 md:gap-0 text-center md:text-left">
               <motion.div
                 initial={{ opacity: 0, x: -30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.6, duration: 0.8, ease: "easeOut" }}
-                className="max-w-[200px]"
+                className="max-w-[17rem] md:max-w-[13rem]"
               >
-                <p className="text-xs md:text-sm font-medium uppercase tracking-widest leading-relaxed text-zinc-400">
+                <p className="text-xs md:text-sm font-medium uppercase tracking-wide leading-relaxed text-zinc-400">
                   A Developer Driven By Crafting Striking And Unforgettable Projects
                 </p>
               </motion.div>
@@ -1290,18 +1402,18 @@ export default function App() {
                 initial={{ opacity: 0, x: 30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.8, duration: 0.8, ease: "easeOut" }}
-                className="flex items-center flex-wrap md:flex-nowrap gap-3 md:gap-4"
+                className="flex items-center justify-center flex-wrap md:flex-nowrap gap-3 md:gap-4"
               >
-                <a href="https://github.com/adricocorson" target="_blank" rel="noreferrer" className="flex items-center justify-center p-3 md:p-4 rounded-lg bg-black border border-zinc-800 text-white transition-all duration-300 hover:bg-white hover:text-black hover:border-white hover:scale-110 shadow-lg">
+                <a href="https://github.com/adricocorson" target="_blank" rel="noreferrer" className="flex items-center justify-center min-h-11 min-w-11 p-3 md:p-4 rounded-lg bg-black border border-zinc-800 text-white transition-all duration-300 hover:bg-white hover:text-black hover:border-white hover:scale-110 shadow-lg" aria-label="GitHub">
                   <Github size={20} />
                 </a>
-                <a href="https://www.linkedin.com/in/adrico/" target="_blank" rel="noreferrer" className="flex items-center justify-center p-3 md:p-4 rounded-lg bg-black border border-zinc-800 text-white transition-all duration-300 hover:bg-white hover:text-black hover:border-white hover:scale-110 shadow-lg">
+                <a href="https://www.linkedin.com/in/adrico/" target="_blank" rel="noreferrer" className="flex items-center justify-center min-h-11 min-w-11 p-3 md:p-4 rounded-lg bg-black border border-zinc-800 text-white transition-all duration-300 hover:bg-white hover:text-black hover:border-white hover:scale-110 shadow-lg" aria-label="LinkedIn">
                   <Linkedin size={20} />
                 </a>
-                <a href="mailto:adricocorsonz@gmail.com?subject=Let's%20Work%20Together" target="_blank" rel="noreferrer" className="flex items-center justify-center p-3 md:p-4 rounded-lg bg-black border border-zinc-800 text-white transition-all duration-300 hover:bg-white hover:text-black hover:border-white hover:scale-110 shadow-lg">
+                <a href="mailto:adricocorsonz@gmail.com?subject=Let's%20Work%20Together" target="_blank" rel="noreferrer" className="flex items-center justify-center min-h-11 min-w-11 p-3 md:p-4 rounded-lg bg-black border border-zinc-800 text-white transition-all duration-300 hover:bg-white hover:text-black hover:border-white hover:scale-110 shadow-lg" aria-label="Email">
                   <Mail size={20} />
                 </a>
-                <a href="https://wa.me/601128741876" target="_blank" rel="noreferrer" className="flex items-center justify-center p-3 md:p-4 rounded-lg bg-black border border-zinc-800 text-white transition-all duration-300 hover:bg-white hover:text-black hover:border-white hover:scale-110 shadow-lg">
+                <a href="https://wa.me/601128741876" target="_blank" rel="noreferrer" className="flex items-center justify-center min-h-11 min-w-11 p-3 md:p-4 rounded-lg bg-black border border-zinc-800 text-white transition-all duration-300 hover:bg-white hover:text-black hover:border-white hover:scale-110 shadow-lg" aria-label="WhatsApp">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
                   </svg>
@@ -1329,39 +1441,39 @@ export default function App() {
         </section>
 
         {/* --- PORTFOLIO GRID SCROLLER --- */}
-        <section ref={gridRef} className="relative z-10 bg-black pb-32 pt-10 overflow-hidden flex flex-col gap-4">
+        <section ref={gridRef} className="relative z-10 bg-black pb-20 sm:pb-24 lg:pb-32 pt-8 sm:pt-10 overflow-hidden flex flex-col gap-3 sm:gap-4">
           <motion.div
             style={{ x: row1X }}
-            className="flex gap-4 w-max px-4 md:px-10"
+            className="flex gap-3 sm:gap-4 w-max px-4 md:px-10"
           >
             {row1Images.map((src, i) => (
               <div
                 key={`r1-${i}`}
-                className="w-[75vw] md:w-[40vw] lg:w-[30vw] aspect-video bg-zinc-900 rounded-xl overflow-hidden relative group cursor-pointer shrink-0"
+                className="w-[82vw] sm:w-[58vw] md:w-[42vw] xl:w-[28vw] aspect-video bg-zinc-900 rounded-xl overflow-hidden relative group cursor-pointer shrink-0"
               >
-                <img src={src} alt="Portfolio Work" className="w-full h-full object-cover transition-all duration-700 saturate-50 group-hover:saturate-100 opacity-60 group-hover:opacity-100" />
+                <img src={src} alt="" aria-hidden="true" loading="lazy" decoding="async" className="w-full h-full object-cover transition-all duration-700 saturate-50 group-hover:saturate-100 opacity-60 group-hover:opacity-100" />
               </div>
             ))}
           </motion.div>
 
           <motion.div
             style={{ x: row2X }}
-            className="flex gap-4 w-max px-4 md:px-10"
+            className="flex gap-3 sm:gap-4 w-max px-4 md:px-10"
           >
             {row2Images.map((src, i) => (
               <div
                 key={`r2-${i}`}
-                className="w-[75vw] md:w-[40vw] lg:w-[30vw] aspect-video bg-zinc-900 rounded-xl overflow-hidden relative group cursor-pointer shrink-0"
+                className="w-[82vw] sm:w-[58vw] md:w-[42vw] xl:w-[28vw] aspect-video bg-zinc-900 rounded-xl overflow-hidden relative group cursor-pointer shrink-0"
               >
-                <img src={src} alt="Portfolio Work" className="w-full h-full object-cover transition-all duration-700 saturate-50 group-hover:saturate-100 opacity-60 group-hover:opacity-100" />
+                <img src={src} alt="" aria-hidden="true" loading="lazy" decoding="async" className="w-full h-full object-cover transition-all duration-700 saturate-50 group-hover:saturate-100 opacity-60 group-hover:opacity-100" />
               </div>
             ))}
           </motion.div>
         </section>
 
         {/* --- ABOUT SECTION (Sticky Scrub) --- */}
-        <section id="about" ref={aboutRef} className="relative z-20 bg-white text-black rounded-t-[3rem] -mt-16 h-[250vh]">
-          <div className="sticky top-0 w-full h-[100dvh] flex flex-col items-center justify-center px-6 md:px-20 overflow-hidden">
+        <section id="about" ref={aboutRef} className="relative z-20 bg-white text-black rounded-t-[2rem] sm:rounded-t-[3rem] -mt-12 sm:-mt-16 min-h-[100svh] lg:h-[250vh]">
+          <div className="relative lg:sticky top-0 w-full min-h-[100svh] lg:h-[100dvh] flex flex-col items-center justify-center px-5 sm:px-8 lg:px-20 py-24 sm:py-28 lg:py-0 overflow-hidden">
 
             <motion.div
               animate={{ y: [-20, 20], rotate: [10, -10] }}
@@ -1386,13 +1498,13 @@ export default function App() {
             </motion.div>
 
             <div className="max-w-5xl mx-auto flex flex-col items-center text-center">
-              <div className="overflow-hidden mb-10 pb-4">
+              <div className="overflow-hidden mb-7 sm:mb-10 pb-4">
                 <motion.h2
                   initial={{ y: "100%", opacity: 0 }}
                   whileInView={{ y: 0, opacity: 1 }}
                   viewport={{ once: true, margin: "-50px" }}
                   transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-                  className="text-[12vw] md:text-[8vw] font-black uppercase tracking-tighter leading-none"
+                  className="text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-black uppercase tracking-normal leading-none"
                 >
                   ABOUT ME
                 </motion.h2>
@@ -1400,8 +1512,8 @@ export default function App() {
 
               <ScrollRevealText
                 text="I'm an IT student at Asia Pacific University specializing in Business Information Systems. I combine front-end development, UI/UX design, and full-stack engineering to craft seamless digital experiences. Always eager to explore new technologies, I'm currently seeking opportunities to bring innovative projects to life."
-                className="text-lg md:text-2xl font-medium max-w-3xl leading-relaxed text-zinc-800 mb-12"
-                progress={smoothAboutProgress}
+                className="text-base sm:text-lg md:text-xl lg:text-2xl font-medium max-w-3xl leading-relaxed text-zinc-800 mb-8 sm:mb-12"
+                progress={isDesktop ? smoothAboutProgress : null}
               />
 
               <motion.div
@@ -1426,14 +1538,14 @@ export default function App() {
         </section>
 
         {/* --- SERVICES SECTION --- */}
-        <section id="services" className="relative z-20 bg-white text-black pb-32 px-6 md:px-20 overflow-hidden pt-10">
+        <section id="services" className="relative z-20 bg-white text-black pb-20 sm:pb-24 lg:pb-32 px-5 sm:px-8 lg:px-20 overflow-hidden pt-8 sm:pt-10">
           <div className="max-w-6xl mx-auto">
             <motion.h2
               variants={slideInLeft}
               initial="hidden"
               whileInView="show"
               viewport={{ once: false, margin: "-50px" }}
-              className="text-[10vw] md:text-[6vw] font-black uppercase tracking-tighter mb-10 md:mb-16 text-center md:text-left"
+              className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black uppercase tracking-normal mb-10 md:mb-16 text-center md:text-left"
             >
               SERVICES
             </motion.h2>
@@ -1450,11 +1562,9 @@ export default function App() {
                     hidden: { borderBottomColor: "rgba(0,0,0,0)", transition: { duration: 0.4 } },
                     show: { borderBottomColor: "rgba(0,0,0,0.2)", transition: { duration: 0.8 } }
                   }}
-                  /* CRITICAL RESPONSIVENESS FIX: Forced horizontal flex row on ALL screens so number and title always sit perfectly side-by-side */
-                  className="flex flex-row items-start md:items-center py-8 md:py-10 border-b border-black/20"
+                  className="flex flex-col sm:flex-row items-start md:items-center gap-3 sm:gap-0 py-7 sm:py-8 md:py-10 border-b border-black/20"
                 >
-                  {/* CRITICAL UX FIX: Tightened the width of the number container specifically for mobile to prevent title squishing */}
-                  <div className="w-12 min-[400px]:w-16 md:w-24 shrink-0 overflow-hidden pt-1 md:pt-2">
+                  <div className="w-auto sm:w-16 md:w-24 shrink-0 overflow-hidden pt-1 md:pt-2">
                     <motion.div
                       custom={i}
                       variants={{
@@ -1465,12 +1575,12 @@ export default function App() {
                           transition: { duration: 0.8, delay: i * 0.15, ease: [0.16, 1, 0.3, 1] }
                         })
                       }}
-                      className="text-2xl sm:text-4xl md:text-6xl font-black text-black"
+                      className="text-3xl sm:text-4xl md:text-6xl font-black text-black"
                     >
                       {service.num}
                     </motion.div>
                   </div>
-                  <div className="flex-1 flex flex-col gap-2 overflow-hidden pt-1 md:pt-2 md:pl-10">
+                  <div className="flex-1 flex flex-col gap-2 overflow-hidden pt-1 md:pt-2 sm:pl-6 md:pl-10 min-w-0">
                     <motion.div
                       custom={i}
                       variants={{
@@ -1482,8 +1592,8 @@ export default function App() {
                         })
                       }}
                     >
-                      <h3 className="text-xl sm:text-2xl md:text-4xl font-black uppercase mb-1 md:mb-3 text-black">{service.title}</h3>
-                      <p className="text-zinc-800 max-w-2xl text-base md:text-lg font-medium">{service.desc}</p>
+                      <h3 className="text-2xl sm:text-3xl md:text-4xl font-black uppercase mb-1 md:mb-3 text-black leading-tight">{service.title}</h3>
+                      <p className="text-zinc-800 max-w-2xl text-sm sm:text-base md:text-lg font-medium leading-relaxed">{service.desc}</p>
                     </motion.div>
                   </div>
                 </motion.div>
@@ -1493,19 +1603,19 @@ export default function App() {
         </section>
 
         {/* --- PROJECTS SECTION --- */}
-        <section id="projects" className="relative z-30 bg-black text-white rounded-[3rem] -mt-16 pt-32 pb-40 px-6 md:px-10">
+        <section id="projects" className="relative z-30 bg-black text-white rounded-[2rem] sm:rounded-[3rem] -mt-12 sm:-mt-16 pt-24 sm:pt-28 lg:pt-32 pb-24 sm:pb-32 lg:pb-40 px-4 sm:px-6 lg:px-10">
           <div className="max-w-7xl mx-auto">
             <motion.h2
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.8 }}
-              className="text-[12vw] md:text-[8vw] font-black uppercase tracking-tighter leading-none mb-20 text-center"
+              className="text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-black uppercase tracking-normal leading-none mb-12 sm:mb-16 lg:mb-20 text-center"
             >
               PROJECTS
             </motion.h2>
 
-            <div className="flex flex-col gap-16 md:gap-32 pb-[10vh]">
+            <div className="flex flex-col gap-10 sm:gap-16 md:gap-32 pb-[6vh] md:pb-[10vh]">
               {PROJECTS.map((project, i) => (
                 <motion.div
                   key={project.id}
@@ -1513,19 +1623,19 @@ export default function App() {
                   whileInView={{ opacity: 1, y: 0, scale: 1 }}
                   viewport={{ once: true, margin: "-15% 0px -15% 0px" }}
                   transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-                  className="sticky bg-[#0f0f0f] border border-zinc-800 rounded-[2rem] md:rounded-[2.5rem] p-6 md:p-12 flex flex-col gap-6 md:gap-8 shadow-2xl top-[calc(12vh+var(--offset-mobile))] md:top-[calc(10vh+var(--offset-desktop))]"
+                  className="relative md:sticky bg-[#0f0f0f] border border-zinc-800 rounded-[1.25rem] sm:rounded-[2rem] md:rounded-[2.5rem] p-4 sm:p-6 md:p-8 lg:p-10 flex flex-col gap-5 sm:gap-6 md:gap-6 shadow-2xl md:top-[calc(1rem+var(--offset-desktop))] lg:top-[calc(1.5rem+var(--offset-desktop))]"
                   style={{
                     "--offset-mobile": `${i * 16}px`,
-                    "--offset-desktop": `${i * 40}px`,
+                    "--offset-desktop": `${i * 24}px`,
                     zIndex: i
                   }}
                 >
-                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                    <div className="flex items-center gap-5 md:gap-8">
-                      <span className="text-4xl md:text-7xl font-black text-white">{project.id}</span>
-                      <div>
-                        <h3 className="text-xl md:text-3xl font-bold mb-1">{project.name}</h3>
-                        <p className="text-xs md:text-sm tracking-widest uppercase text-zinc-500 font-bold">{project.desc}</p>
+                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-5 sm:gap-6">
+                    <div className="flex items-start sm:items-center gap-4 sm:gap-5 md:gap-8 min-w-0">
+                      <span className="text-3xl sm:text-4xl md:text-7xl font-black text-white leading-none">{project.id}</span>
+                      <div className="min-w-0">
+                        <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-1 leading-tight">{project.name}</h3>
+                        <p className="text-xs md:text-sm tracking-wide uppercase text-zinc-500 font-bold leading-relaxed">{project.desc}</p>
                       </div>
                     </div>
                     {project.link ? (
@@ -1533,23 +1643,21 @@ export default function App() {
                         href={project.link}
                         target="_blank"
                         rel="noreferrer"
-                        className="flex items-center gap-2 px-5 py-2 md:px-6 md:py-2 rounded-full border border-zinc-700 text-xs md:text-sm font-bold tracking-widest uppercase hover:bg-white hover:text-black transition-colors w-full md:w-auto justify-center"
+                        className="flex items-center gap-2 min-h-11 px-5 py-2 md:px-6 md:py-2 rounded-full border border-zinc-700 text-xs md:text-sm font-bold tracking-wide uppercase hover:bg-white hover:text-black transition-colors w-full md:w-auto justify-center"
                       >
                         {project.type === "VIEW SOURCE" ? <Github size={16} /> : <ArrowUpRight size={16} />}
                         {project.type}
                       </a>
                     ) : (
-                      <button className="px-5 py-2 md:px-6 md:py-2 rounded-full border border-zinc-700 text-xs md:text-sm font-bold tracking-widest uppercase hover:bg-white hover:text-black transition-colors w-full md:w-auto">
+                      <button className="min-h-11 px-5 py-2 md:px-6 md:py-2 rounded-full border border-zinc-700 text-xs md:text-sm font-bold tracking-wide uppercase hover:bg-white hover:text-black transition-colors w-full md:w-auto">
                         {project.type}
                       </button>
                     )}
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3 md:gap-6 mt-2 md:mt-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-6 mt-1 sm:mt-2 md:mt-4">
                     {project.images.map((img, idx) => (
-                      <div key={idx} className="aspect-video md:aspect-[4/3] rounded-xl md:rounded-2xl overflow-hidden bg-zinc-800 relative group">
-                        <img src={img} alt={`${project.name} work`} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                      </div>
+                      <ProjectMedia key={`${project.id}-${idx}`} src={img} projectName={project.name} index={idx} />
                     ))}
                   </div>
                 </motion.div>
@@ -1559,8 +1667,8 @@ export default function App() {
         </section>
 
         {/* --- CONTACT SECTION (Sticky Pinned Container) --- */}
-        <section id="contacts" ref={contactRef} className="relative z-20 bg-white text-black -mt-16 h-[250vh]">
-          <div className="sticky top-0 w-full h-[100dvh] overflow-hidden flex flex-col items-center justify-center">
+        <section id="contacts" ref={contactRef} className="relative z-20 bg-white text-black -mt-12 sm:-mt-16 min-h-[100svh] lg:h-[250vh]">
+          <div className="relative lg:sticky top-0 w-full min-h-[100svh] lg:h-[100dvh] overflow-hidden flex flex-col items-center justify-center py-24 sm:py-28 lg:py-0">
 
             {/* --- BACKGROUND ELEMENTS --- */}
             <div className="absolute inset-0 pointer-events-none z-0 flex items-center justify-center overflow-hidden">
@@ -1571,66 +1679,56 @@ export default function App() {
               <motion.div
                 animate={{ rotate: 360, scale: [1, 1.2, 1] }}
                 transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-                className="absolute top-[-20%] left-[-10%] w-[60vw] h-[60vw] rounded-full bg-purple-300 mix-blend-multiply filter blur-[120px] opacity-30"
+                className="hidden lg:block absolute top-[-14%] left-[-8%] w-[42vw] h-[42vw] rounded-full bg-purple-300 mix-blend-multiply filter blur-[80px] opacity-20 will-change-transform"
               />
               <motion.div
                 animate={{ rotate: -360, scale: [1, 1.3, 1] }}
                 transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-                className="absolute bottom-[-20%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-pink-200 mix-blend-multiply filter blur-[120px] opacity-20"
+                className="hidden lg:block absolute bottom-[-12%] right-[-8%] w-[36vw] h-[36vw] rounded-full bg-pink-200 mix-blend-multiply filter blur-[80px] opacity-[0.15] will-change-transform"
               />
 
               {/* Massive Parallax Typography Watermark */}
-              <motion.div style={{ y: contactTextY, scale: contactTextScale }} className="absolute w-full flex justify-center opacity-[0.03] select-none">
-                <span className="text-[22vw] font-black leading-none whitespace-nowrap tracking-tighter">LET'S TALK</span>
+              <motion.div style={isDesktop ? { y: contactTextY, scale: contactTextScale } : undefined} className="absolute w-full flex justify-center opacity-[0.03] select-none">
+                <span className="text-8xl sm:text-[9rem] md:text-[12rem] lg:text-[16rem] font-black leading-none whitespace-nowrap tracking-normal">LET'S TALK</span>
               </motion.div>
 
               {/* Floating Parallax Geometrics */}
-              <motion.div style={{ y: contactShape1Y, rotate: contactShapeRotate1 }} className="absolute top-[25%] left-[10%] md:left-[20%] text-black/10">
+              <motion.div style={isDesktop ? { y: contactShape1Y, rotate: contactShapeRotate1 } : undefined} className="absolute top-[25%] left-[10%] md:left-[20%] text-black/10">
                 <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 5v14M5 12h14" /></svg>
               </motion.div>
-              <motion.div style={{ y: contactShape2Y, rotate: contactShapeRotate2 }} className="absolute bottom-[25%] right-[10%] md:right-[20%] text-black/10">
+              <motion.div style={isDesktop ? { y: contactShape2Y, rotate: contactShapeRotate2 } : undefined} className="absolute bottom-[25%] right-[10%] md:right-[20%] text-black/10">
                 <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1"><circle cx="12" cy="12" r="10" /></svg>
               </motion.div>
-              <motion.div style={{ y: contactShape1Y, x: 60, rotate: contactShapeRotate2 }} className="absolute top-[60%] left-[5%] text-black/10 hidden md:block">
+              <motion.div style={isDesktop ? { y: contactShape1Y, x: 60, rotate: contactShapeRotate2 } : { x: 60 }} className="absolute top-[60%] left-[5%] text-black/10 hidden md:block">
                 <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2" /></svg>
               </motion.div>
             </div>
 
             {/* --- FOREGROUND CONTENT --- */}
-            <div className="max-w-5xl mx-auto flex flex-col items-center text-center relative z-10 px-6 md:px-10">
+            <div className="max-w-5xl mx-auto flex flex-col items-center text-center relative z-10 px-5 sm:px-8 md:px-10">
 
-              <div className="overflow-hidden mb-8 md:mb-10 flex">
-                <div className="flex">
-                  {"LET'S TALK".split('').map((char, i) => {
-                    // Dynamic scroll boundaries for each letter so they scrub in sequentially while pinned
-                    const start = 0.32 + (i * 0.015);
-                    const end = start + 0.1;
-
-                    const charY = useTransform(smoothContactProgress, [start, end], ["120%", "0%"], { clamp: true });
-                    const charRotate = useTransform(smoothContactProgress, [start, end], [15, 0], { clamp: true });
-                    const charOpacity = useTransform(smoothContactProgress, [start, end], [0, 1], { clamp: true });
-
-                    return (
-                      <motion.span
-                        key={i}
-                        style={{ y: charY, rotate: charRotate, opacity: charOpacity, display: 'inline-block' }}
-                        className="text-[12vw] md:text-[8vw] font-black uppercase tracking-tighter leading-none origin-bottom-left"
-                      >
-                        {char === " " ? "\u00A0" : char}
-                      </motion.span>
-                    );
-                  })}
-                </div>
+              <div className="overflow-hidden mb-7 sm:mb-8 md:mb-10 flex">
+                {isDesktop ? (
+                  <div className="flex">
+                    {"LET'S TALK".split('').map((char, i) => (
+                      <ContactLetter key={i} char={char} index={i} progress={smoothContactProgress} />
+                    ))}
+                  </div>
+                ) : (
+                  <h2 className="text-5xl sm:text-6xl md:text-8xl font-black uppercase tracking-normal leading-none">
+                    LET'S TALK
+                  </h2>
+                )}
               </div>
 
               <motion.p
-                style={{ opacity: descOpacity, y: descY }}
-                className="text-base md:text-2xl font-medium max-w-2xl leading-relaxed text-zinc-800 mb-8 md:mb-12"
+                style={isDesktop ? { opacity: descOpacity, y: descY } : undefined}
+                className="text-base sm:text-lg md:text-xl lg:text-2xl font-medium max-w-2xl leading-relaxed text-zinc-800 mb-8 md:mb-12"
               >
                 I am actively seeking full-time roles and job opportunities in startups, agencies, and design studios. Whether you're building something exciting, looking for fresh creative talent, or just want to connect feel free to reach out.
               </motion.p>
 
-              <motion.div style={{ opacity: btnOpacity, y: btnY, scale: btnScale }}>
+              <motion.div style={isDesktop ? { opacity: btnOpacity, y: btnY, scale: btnScale } : undefined}>
                 <a href="mailto:adricocorsonz@gmail.com?subject=Let's%20Work%20Together" target="_blank" rel="noreferrer" className="btn-animated shadow-2xl">
                   <span className="text-wrapper">
                     <span className="text-default">Contact Me</span>
@@ -1643,10 +1741,10 @@ export default function App() {
         </section>
 
         {/* --- EXPANDED FOOTER --- */}
-        <footer ref={footerRef} className="bg-[#141414] text-white pt-20 pb-8 relative overflow-hidden rounded-t-[2.5rem] md:rounded-t-[3.5rem] z-40 -mt-16">
-          <div className="max-w-[90rem] mx-auto px-8 md:px-16 relative z-10 flex flex-col h-full">
+        <footer ref={footerRef} className="bg-[#141414] text-white pt-14 sm:pt-16 lg:pt-20 pb-8 relative overflow-hidden rounded-t-[2rem] sm:rounded-t-[2.5rem] md:rounded-t-[3.5rem] z-40 -mt-12 sm:-mt-16">
+          <div className="max-w-[90rem] mx-auto px-5 sm:px-8 lg:px-16 relative z-10 flex flex-col h-full">
 
-            <div className="flex flex-col lg:flex-row justify-between mb-12 gap-16 lg:gap-8 mt-4">
+            <div className="flex flex-col lg:flex-row justify-between mb-10 sm:mb-12 gap-10 sm:gap-14 lg:gap-8 mt-4">
 
               <div className="flex gap-10 md:gap-28 w-full md:w-auto justify-between md:justify-start">
                 <motion.div variants={footerFadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="flex flex-col gap-5">
@@ -1661,17 +1759,17 @@ export default function App() {
               </div>
 
               <motion.div variants={footerFadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="w-full lg:max-w-[460px]">
-                <h3 className="text-2xl md:text-3xl font-medium mb-6 tracking-tight">Still have questions?</h3>
+                <h3 className="text-2xl md:text-3xl font-medium mb-6 tracking-normal">Still have questions?</h3>
                 {/* CRITICAL UX FIX: Flex alignment explicitly centers socials horizontally on mobile for a balanced look */}
                 <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 w-full">
-                  <a href="https://www.linkedin.com/in/adrico/" target="_blank" rel="noreferrer" className="bg-white/5 border border-white/10 text-white px-6 py-3.5 md:py-4 rounded-full font-medium hover:bg-white hover:text-black hover:border-white transition-all duration-300 whitespace-nowrap text-sm md:text-base flex items-center gap-2">
+                  <a href="https://www.linkedin.com/in/adrico/" target="_blank" rel="noreferrer" className="bg-white/5 border border-white/10 text-white min-h-11 px-5 sm:px-6 py-3.5 md:py-4 rounded-full font-medium hover:bg-white hover:text-black hover:border-white transition-all duration-300 whitespace-nowrap text-sm md:text-base flex items-center justify-center gap-2 w-full sm:w-auto">
                     <Linkedin size={18} /> LinkedIn
                   </a>
-                  <a href="https://wa.me/601128741876" target="_blank" rel="noreferrer" className="bg-white/5 border border-white/10 text-white px-6 py-3.5 md:py-4 rounded-full font-medium hover:bg-white hover:text-black hover:border-white transition-all duration-300 whitespace-nowrap text-sm md:text-base flex items-center gap-2">
+                  <a href="https://wa.me/601128741876" target="_blank" rel="noreferrer" className="bg-white/5 border border-white/10 text-white min-h-11 px-5 sm:px-6 py-3.5 md:py-4 rounded-full font-medium hover:bg-white hover:text-black hover:border-white transition-all duration-300 whitespace-nowrap text-sm md:text-base flex items-center justify-center gap-2 w-full sm:w-auto">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" /></svg>
                     WhatsApp
                   </a>
-                  <a href="https://github.com/adricocorson" target="_blank" rel="noreferrer" className="bg-white/5 border border-white/10 text-white px-6 py-3.5 md:py-4 rounded-full font-medium hover:bg-white hover:text-black hover:border-white transition-all duration-300 whitespace-nowrap text-sm md:text-base flex items-center gap-2">
+                  <a href="https://github.com/adricocorson" target="_blank" rel="noreferrer" className="bg-white/5 border border-white/10 text-white min-h-11 px-5 sm:px-6 py-3.5 md:py-4 rounded-full font-medium hover:bg-white hover:text-black hover:border-white transition-all duration-300 whitespace-nowrap text-sm md:text-base flex items-center justify-center gap-2 w-full sm:w-auto">
                     <Github size={18} /> GitHub
                   </a>
                 </div>
@@ -1681,31 +1779,16 @@ export default function App() {
             <div className="flex-grow flex items-end justify-center w-full mt-2">
               <div className="w-full border-b border-gray-800 pt-4" style={{ clipPath: "inset(-100vh -100vw 0 -100vw)" }}>
                 <div className="transform-gpu flex justify-center">
-                  <h2 className="giant-text font-black select-none mb-[-7vw]">
-                    {["A", "d", "r", "i", "c", "o"].map((char, index) => {
-                      const start = index * 0.1;
-                      const end = start + 0.5;
-
-                      // CRITICAL FIX: Explicit { clamp: true } entirely avoids invalid values breaking the CSS!
-                      const y = useTransform(smoothFooterProgress, [start, end], ["120%", "0%"], { clamp: true });
-                      const opacity = useTransform(smoothFooterProgress, [start, end], [0, 1], { clamp: true });
-
-                      return (
-                        <motion.span
-                          key={index}
-                          style={{ y, opacity, display: 'inline-block' }}
-                          className="char"
-                        >
-                          {char}
-                        </motion.span>
-                      )
-                    })}
+                  <h2 className="giant-text font-black select-none mb-[-4vw] md:mb-[-5vw]">
+                    {["A", "d", "r", "i", "c", "o"].map((char, index) => (
+                      <FooterChar key={index} char={char} index={index} progress={smoothFooterProgress} />
+                    ))}
                   </h2>
                 </div>
               </div>
             </div>
 
-            <motion.div variants={footerFadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="flex flex-col md:flex-row justify-between items-center text-sm text-gray-500 mt-6 gap-4 text-center md:text-left pb-4">
+            <motion.div variants={footerFadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="flex flex-col md:flex-row justify-between items-center text-sm text-gray-500 mt-5 sm:mt-6 gap-4 text-center md:text-left pb-4">
               <p>© 2026 Adrico Corson Mulia. All rights reserved.</p>
               <div className="flex items-center">
                 <span className="tracking-wide uppercase text-xs font-bold">LOCAL TIME KL/MY:&nbsp;<span className="text-gray-300 font-medium"><LocalTime /></span></span>
